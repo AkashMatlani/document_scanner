@@ -37,7 +37,7 @@ class _OcrPageState extends ConsumerState<OcrPage> {
     await ref.read(scanControllerProvider.notifier).recognize(path);
   }
 
-  Future<void> _enhace() async {
+  Future<void> _enhance() async {
     final state = ref.read(scanControllerProvider);
     if (state.imagePath == null) return;
     final path = await ref
@@ -100,7 +100,7 @@ class _OcrPageState extends ConsumerState<OcrPage> {
             ),
             const SizedBox(height: 12),
             OutlinedButton.icon(
-              onPressed: state.busy ? null : _enhace,
+              onPressed: state.busy ? null : _enhance,
               label: const Text('Enhance + grayscale + OCR'),
               icon: const Icon(Icons.auto_fix_high),
             ),
