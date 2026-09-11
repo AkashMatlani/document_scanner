@@ -32,7 +32,7 @@ class HistoryPage extends ConsumerWidget {
                             : const Icon(Icons.description),
                       ),
                       title: Text(
-                        d.text.isNotEmpty
+                        d.text.isEmpty
                             ? 'No text recognized'
                             : d.text
                                   .replaceAll('\n', ' ')
