@@ -1,3 +1,4 @@
+import 'package:document_scanner/features/history/history_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -10,6 +11,7 @@ final GoRouter appRouter = GoRouter(
   initialLocation: '/',
   routes: [
     GoRoute(path: '/', builder: (context, state) => const HomePage()),
+    GoRoute(path: '/history', builder: (context, state) => const HistoryPage()),
     GoRoute(path: '/scanner', builder: (context, state) => const ScannerPage()),
     GoRoute(path: '/ocr', builder: (context, state) => const OcrPage()),
   ],
