@@ -28,7 +28,7 @@ class _LiveOcrPageState extends ConsumerState<LiveOcrPage> {
 
   Future<void> _init() async {
     final cameras = await availableCameras();
-    if (cameras.isEmpty) return;
+    if (!mounted || cameras.isEmpty) return;
     _description = cameras.firstWhere(
       (c) => c.lensDirection == CameraLensDirection.back,
       orElse: () => cameras.first,
@@ -38,13 +38,21 @@ class _LiveOcrPageState extends ConsumerState<LiveOcrPage> {
       ResolutionPreset.medium,
       enableAudio: false,
       imageFormatGroup: Platform.isAndroid
-          ? ImageFormatGroup.yuv420
+          ? ImageFormatGroup.nv21
           : ImageFormatGroup.bgra8888,
     );
 
     await controller.initialize();
+    if (!mounted) {
+      await controller.dispose();
+      return;
+    }
     await controller.startImageStream(_processFrame);
-    if (mounted) setState(() => _camera = controller);
+    if (!mounted) {
+      await controller.dispose();
+      return;
+    }
+    setState(() => _camera = controller);
   }
 
   Future<void> _processFrame(CameraImage image) async {
@@ -107,7 +115,7 @@ class _LiveOcrPageState extends ConsumerState<LiveOcrPage> {
                   padding: const EdgeInsets.all(16),
                   child: SafeArea(
                     child: Text(
-                      _text.isEmpty ? 'Point the camera at _text' : _text,
+                      _text.isEmpty ? 'Point the camera at text' : _text,
                       style: const TextStyle(color: Colors.white, fontSize: 18),
                     ),
                   ),
