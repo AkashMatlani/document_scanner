@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import 'features/home/home_page.dart';
+import 'features/live_ocr/live_ocr_page.dart';
 import 'features/ocr/ocr_page.dart';
 import 'features/scanner/scanner_page.dart';
 
@@ -14,6 +15,7 @@ final GoRouter appRouter = GoRouter(
     GoRoute(path: '/history', builder: (context, state) => const HistoryPage()),
     GoRoute(path: '/scanner', builder: (context, state) => const ScannerPage()),
     GoRoute(path: '/ocr', builder: (context, state) => const OcrPage()),
+    GoRoute(path: '/live-ocr', builder: (context, state) => const LiveOcrPage()),
   ],
 );
 
