@@ -2,8 +2,8 @@ import 'dart:io';
 
 import 'package:camera/camera.dart';
 import 'package:document_scanner/providers/app_providers.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_mlkit_text_recognition/google_mlkit_text_recognition.dart';
 
@@ -19,6 +19,14 @@ class _LiveOcrPageState extends ConsumerState<LiveOcrPage> {
   bool _busy = false;
   String _text = '';
   CameraDescription? _description;
+  String? _cameraError;
+
+  static const _orientations = <DeviceOrientation, int>{
+    DeviceOrientation.portraitUp: 0,
+    DeviceOrientation.landscapeLeft: 90,
+    DeviceOrientation.portraitDown: 180,
+    DeviceOrientation.landscapeRight: 270,
+  };
 
   @override
   void initState() {
@@ -27,32 +35,69 @@ class _LiveOcrPageState extends ConsumerState<LiveOcrPage> {
   }
 
   Future<void> _init() async {
-    final cameras = await availableCameras();
-    if (!mounted || cameras.isEmpty) return;
-    _description = cameras.firstWhere(
-      (c) => c.lensDirection == CameraLensDirection.back,
-      orElse: () => cameras.first,
-    );
-    final controller = CameraController(
-      _description!,
-      ResolutionPreset.medium,
-      enableAudio: false,
-      imageFormatGroup: Platform.isAndroid
-          ? ImageFormatGroup.nv21
-          : ImageFormatGroup.bgra8888,
-    );
+    CameraController? controller;
+    try {
+      final cameras = await availableCameras();
+      if (!mounted) return;
+      if (cameras.isEmpty) throw StateError('No cameras available');
 
-    await controller.initialize();
-    if (!mounted) {
-      await controller.dispose();
-      return;
+      final description = cameras.firstWhere(
+        (camera) => camera.lensDirection == CameraLensDirection.back,
+        orElse: () => cameras.first,
+      );
+      controller = CameraController(
+        description,
+        ResolutionPreset.medium,
+        enableAudio: false,
+        imageFormatGroup: Platform.isAndroid
+            ? ImageFormatGroup.nv21
+            : ImageFormatGroup.bgra8888,
+      );
+
+      await controller.initialize();
+      if (!mounted) {
+        await _disposeController(controller);
+        return;
+      }
+
+      await controller.startImageStream(_processFrame);
+      if (!mounted) {
+        await _disposeController(controller);
+        return;
+      }
+
+      setState(() {
+        _description = description;
+        _camera = controller;
+      });
+    } catch (_) {
+      await _disposeController(controller);
+      if (!mounted) return;
+      setState(() {
+        _cameraError = 'Unable to start the camera. Check camera permissions and try again.';
+      });
     }
-    await controller.startImageStream(_processFrame);
-    if (!mounted) {
-      await controller.dispose();
-      return;
+  }
+
+  Future<void> _disposeController(CameraController? controller) async {
+    if (controller == null) return;
+    if (controller.value.isStreamingImages) {
+      try {
+        await controller.stopImageStream();
+      } catch (_) {
+        // Continue disposal even if stopping the stream fails.
+      }
     }
-    setState(() => _camera = controller);
+    try {
+      await controller.dispose();
+    } catch (_) {
+      // The controller is already unusable, so there is nothing else to clean up.
+    }
+  }
+
+  void _retryInit() {
+    setState(() => _cameraError = null);
+    _init();
   }
 
   Future<void> _processFrame(CameraImage image) async {
@@ -75,33 +120,64 @@ class _LiveOcrPageState extends ConsumerState<LiveOcrPage> {
 
   InputImage? _inputImageFromCameraImage(CameraImage image) {
     final camera = _description!;
-    final rotation = InputImageRotationValue.fromRawValue(
-      camera.sensorOrientation,
-    );
-    if (rotation == null) return null;
-    final format = InputImageFormatValue.fromRawValue(image.format.raw);
-    if (format == null) return null;
-    final bytes = WriteBuffer();
-    for (final plane in image.planes) {
-      bytes.putUint8List(plane.bytes);
+    InputImageRotation? rotation;
+    if (Platform.isIOS) {
+      rotation = InputImageRotationValue.fromRawValue(camera.sensorOrientation);
+    } else if (Platform.isAndroid) {
+      var rotationCompensation =
+          _orientations[_camera!.value.deviceOrientation];
+      if (rotationCompensation == null) return null;
+      if (camera.lensDirection == CameraLensDirection.front) {
+        rotationCompensation =
+            (camera.sensorOrientation + rotationCompensation) % 360;
+      } else {
+        rotationCompensation =
+            (camera.sensorOrientation - rotationCompensation + 360) % 360;
+      }
+      rotation = InputImageRotationValue.fromRawValue(rotationCompensation);
     }
+    if (rotation == null) return null;
+
+    final format = InputImageFormatValue.fromRawValue(image.format.raw);
+    if (format == null ||
+        (Platform.isAndroid && format != InputImageFormat.nv21) ||
+        (!Platform.isAndroid && format != InputImageFormat.bgra8888)) {
+      return null;
+    }
+    if (image.planes.length != 1) return null;
+    final plane = image.planes.first;
+
     final metadata = InputImageMetadata(
       size: Size(image.width.toDouble(), image.height.toDouble()),
       rotation: rotation,
       format: format,
-      bytesPerRow: image.planes.first.bytesPerRow,
+      bytesPerRow: plane.bytesPerRow,
     );
 
-    return InputImage.fromBytes(
-      bytes: bytes.done().buffer.asUint8List(),
-      metadata: metadata,
-    );
+    return InputImage.fromBytes(bytes: plane.bytes, metadata: metadata);
   }
 
   @override
   Widget build(BuildContext context) => Scaffold(
     appBar: AppBar(title: const Text('Live Camera OCR')),
-    body: _camera == null
+    body: _cameraError != null
+        ? Center(
+            child: Padding(
+              padding: const EdgeInsets.all(24),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(_cameraError!, textAlign: TextAlign.center),
+                  const SizedBox(height: 16),
+                  FilledButton(
+                    onPressed: _retryInit,
+                    child: const Text('Retry'),
+                  ),
+                ],
+              ),
+            ),
+          )
+        : _camera == null
         ? const Center(child: CircularProgressIndicator())
         : Stack(
             fit: StackFit.expand,
