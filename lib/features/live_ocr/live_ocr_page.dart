@@ -85,13 +85,11 @@ class _LiveOcrPageState extends ConsumerState<LiveOcrPage> {
       try {
         await controller.stopImageStream();
       } catch (_) {
-        // Continue disposal even if stopping the stream fails.
       }
     }
     try {
       await controller.dispose();
     } catch (_) {
-      // The controller is already unusable, so there is nothing else to clean up.
     }
   }
 
