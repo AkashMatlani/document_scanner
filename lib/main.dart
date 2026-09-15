@@ -15,6 +15,7 @@ final GoRouter appRouter = GoRouter(
     GoRoute(path: '/history', builder: (context, state) => const HistoryPage()),
     GoRoute(path: '/scanner', builder: (context, state) => const ScannerPage()),
     GoRoute(path: '/ocr', builder: (context, state) => const OcrPage()),
+    GoRoute(path: '/business-card', builder: (context, state) => const OcrPage(entityMode: true)),
     GoRoute(path: '/live-ocr', builder: (context, state) => const LiveOcrPage()),
   ],
 );
