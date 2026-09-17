@@ -5,7 +5,9 @@ import 'package:document_scanner/providers/app_providers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:google_mlkit_commons/google_mlkit_commons.dart';
 import 'package:google_mlkit_text_recognition/google_mlkit_text_recognition.dart';
+import 'package:google_api_availability/google_api_availability.dart';
 
 class LiveOcrPage extends ConsumerStatefulWidget {
   const LiveOcrPage({super.key});
@@ -35,6 +37,17 @@ class _LiveOcrPageState extends ConsumerState<LiveOcrPage> {
   }
 
   Future<void> _init() async {
+    if (Platform.isAndroid) {
+      final availability = await GoogleApiAvailability.instance
+          .checkGooglePlayServicesAvailability();
+      if (availability != GooglePlayServicesAvailability.success) {
+        if (mounted) {
+          await GoogleApiAvailability.instance.makeGooglePlayServicesAvailable();
+        }
+        return;
+      }
+    }
+
     CameraController? controller;
     try {
       final cameras = await availableCameras();
