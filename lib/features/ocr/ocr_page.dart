@@ -33,6 +33,7 @@ class _OcrPageState extends ConsumerState<OcrPage> {
         IOSUiSettings(title: 'Crop document'),
       ],
     );
+    if (!mounted) return;
     final path = cropped?.path ?? file.path;
     await ref.read(scanControllerProvider.notifier).recognize(path);
   }
@@ -43,9 +44,8 @@ class _OcrPageState extends ConsumerState<OcrPage> {
     final path = await ref
         .read(imageServiceProvider)
         .enhance(state.imagePath!, grayscale: true);
-    if (path != null) {
-      await ref.read(scanControllerProvider.notifier).recognize(path);
-    }
+    if (path == null|| !mounted) return;
+    await ref.read(scanControllerProvider.notifier).recognize(path);
   }
 
   @override
