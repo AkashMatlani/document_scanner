@@ -75,12 +75,17 @@ class ScanController extends Notifier<ScanState> {
   @override
   ScanState build() => const ScanState();
 
-  Future<void> recognize(String path) async {
-    state = state.copyWith(imagePath: path, busy: true, clearError: true);
+  Future<bool> recognize(String path) async {
+    state = state.copyWith(
+        imagePath: path,
+        busy: true,
+        clearError: true
+    );
     try {
       final text = await ref.read(ocrServiceProvider).recognizeFile(path);
+
       final entities = ref.read(entityExtractionProvider).extract(text);
-      state = state.copyWith(text: text, entities: entities, busy: false);
+
       final doc = OcrDocument(
         id: DateTime.now().microsecondsSinceEpoch.toString(),
         imagePath: path,
@@ -89,9 +94,16 @@ class ScanController extends Notifier<ScanState> {
         entities: entities,
       );
       await ref.read(documentsProvider.notifier).add(doc);
+      state = state.copyWith(
+        text: text,
+        entities: entities,
+        busy: false,
+      );
+      return true;
     } catch (e) {
       state = state.copyWith(busy: false, error: e.toString());
     }
+    return false;
   }
 
   void clear() => state = const ScanState();
