@@ -41,10 +41,19 @@ class _LiveOcrPageState extends ConsumerState<LiveOcrPage> {
       final availability = await GoogleApiAvailability.instance
           .checkGooglePlayServicesAvailability();
       if (availability != GooglePlayServicesAvailability.success) {
-        if (mounted) {
-          await GoogleApiAvailability.instance.makeGooglePlayServicesAvailable();
+        if (!mounted) return;
+        await GoogleApiAvailability.instance.makeGooglePlayServicesAvailable();
+        if (!mounted) return;
+
+        final updatedAvailability = await GoogleApiAvailability.instance
+            .checkGooglePlayServicesAvailability();
+        if (updatedAvailability != GooglePlayServicesAvailability.success) {
+          setState(() {
+            _cameraError =
+                'Google Play services are required to use live OCR. Update them and try again.';
+          });
+          return;
         }
-        return;
       }
     }
 
