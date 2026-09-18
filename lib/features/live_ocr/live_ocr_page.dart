@@ -47,6 +47,7 @@ class _LiveOcrPageState extends ConsumerState<LiveOcrPage> {
 
         final updatedAvailability = await GoogleApiAvailability.instance
             .checkGooglePlayServicesAvailability();
+        if (!mounted) return;
         if (updatedAvailability != GooglePlayServicesAvailability.success) {
           setState(() {
             _cameraError =
