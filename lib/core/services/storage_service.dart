@@ -13,9 +13,7 @@ class StorageService {
   Future<Directory> _scansDirectory() async {
     final appDir = await getApplicationDocumentsDirectory();
 
-    final scansDir = Directory(
-      p.join(appDir.path, 'scans'),
-    );
+    final scansDir = Directory(p.join(appDir.path, 'scans'));
 
     if (!await scansDir.exists()) {
       await scansDir.create(recursive: true);
@@ -24,10 +22,7 @@ class StorageService {
     return scansDir;
   }
 
-  Future<String> saveImage(
-      String sourcePath,
-      String documentId,
-      ) async {
+  Future<String> saveImage(String sourcePath, String documentId) async {
     final source = File(sourcePath);
 
     if (!await source.exists()) {
@@ -41,15 +36,19 @@ class StorageService {
         : p.extension(sourcePath);
 
     final destination = File(
-      p.join(
-        scansDir.path,
-        'scan_$documentId$extension',
-      ),
+      p.join(scansDir.path, 'scan_$documentId$extension'),
     );
 
     await source.copy(destination.path);
 
     return destination.path;
+  }
+
+  Future<void> deleteImage(String imagePath) async {
+    final file = File(imagePath);
+    if (await file.exists()) {
+      await file.delete();
+    }
   }
 
   Future<List<OcrDocument>> load() async {
@@ -63,29 +62,20 @@ class StorageService {
     final list = jsonDecode(raw) as List<dynamic>;
 
     return list
-        .map(
-          (e) => OcrDocument.fromJson(
-        Map<String, dynamic>.from(e as Map),
-      ),
-    )
+        .map((e) => OcrDocument.fromJson(Map<String, dynamic>.from(e as Map)))
         .toList();
   }
 
   Future<void> save(OcrDocument document) async {
     final docs = await load();
 
-    final updated = [
-      document,
-      ...docs.where((d) => d.id != document.id),
-    ];
+    final updated = [document, ...docs.where((d) => d.id != document.id)];
 
     final prefs = await SharedPreferences.getInstance();
 
     await prefs.setString(
       _key,
-      jsonEncode(
-        updated.map((d) => d.toJson()).toList(),
-      ),
+      jsonEncode(updated.map((d) => d.toJson()).toList()),
     );
   }
 
@@ -106,12 +96,7 @@ class StorageService {
 
     await prefs.setString(
       _key,
-      jsonEncode(
-        docs
-            .where((d) => d.id != id)
-            .map((d) => d.toJson())
-            .toList(),
-      ),
+      jsonEncode(docs.where((d) => d.id != id).map((d) => d.toJson()).toList()),
     );
   }
 }

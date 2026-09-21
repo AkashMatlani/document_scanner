@@ -76,20 +76,16 @@ class ScanController extends Notifier<ScanState> {
   ScanState build() => const ScanState();
 
   Future<bool> recognize(String path) async {
-    state = state.copyWith(
-        imagePath: path,
-        busy: true,
-        clearError: true
-    );
+    state = state.copyWith(imagePath: path, busy: true, clearError: true);
     try {
       final text = await ref.read(ocrServiceProvider).recognizeFile(path);
 
       final entities = ref.read(entityExtractionProvider).extract(text);
-      final id = DateTime.now() .microsecondsSinceEpoch .toString();
+      final id = DateTime.now().microsecondsSinceEpoch.toString();
       final storage = ref.read(storageServiceProvider);
 
       // Permanently copy the image into app storage. final savedImagePath = await storage.saveImage( path, id, );
-      final savedImagePath = await storage.saveImage( path, id, );
+      final savedImagePath = await storage.saveImage(path, id);
 
       final doc = OcrDocument(
         id: DateTime.now().microsecondsSinceEpoch.toString(),
@@ -98,18 +94,25 @@ class ScanController extends Notifier<ScanState> {
         createdAt: DateTime.now(),
         entities: entities,
       );
-      await ref.read(documentsProvider.notifier).add(doc);
+      try {
+        await ref.read(documentsProvider.notifier).add(doc);
+      } catch (e) {
+        // Persistence failed, so remove the copied image.
+        await storage.deleteImage(savedImagePath);
+        rethrow;
+      }
       state = state.copyWith(
         imagePath: savedImagePath,
         text: text,
         entities: entities,
         busy: false,
       );
+
       return true;
     } catch (e) {
       state = state.copyWith(busy: false, error: e.toString());
+      return false;
     }
-    return false;
   }
 
   void clear() => state = const ScanState();
