@@ -85,16 +85,22 @@ class ScanController extends Notifier<ScanState> {
       final text = await ref.read(ocrServiceProvider).recognizeFile(path);
 
       final entities = ref.read(entityExtractionProvider).extract(text);
+      final id = DateTime.now() .microsecondsSinceEpoch .toString();
+      final storage = ref.read(storageServiceProvider);
+
+      // Permanently copy the image into app storage. final savedImagePath = await storage.saveImage( path, id, );
+      final savedImagePath = await storage.saveImage( path, id, );
 
       final doc = OcrDocument(
         id: DateTime.now().microsecondsSinceEpoch.toString(),
-        imagePath: path,
+        imagePath: savedImagePath,
         text: text,
         createdAt: DateTime.now(),
         entities: entities,
       );
       await ref.read(documentsProvider.notifier).add(doc);
       state = state.copyWith(
+        imagePath: savedImagePath,
         text: text,
         entities: entities,
         busy: false,
