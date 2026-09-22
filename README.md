@@ -11,9 +11,9 @@ Scan a document, let OCR extract the text, detect useful entities, and keep the 
 
 ## 📸 Screenshots
 
-![Scan Page](./assets/screenshots/ScanPage.jpeg)
-![Auto Scan](./assets/screenshots/AutoScan.jpeg)
-![Scan Crop](./assets/screenshots/ScanCrop.jpeg)
+![Scan Page](https://raw.githubusercontent.com/AkashMatlani/document_scanner/master/assets/screenshots/ScanPage.jpeg)
+![Auto Scan](https://raw.githubusercontent.com/AkashMatlani/document_scanner/master/assets/screenshots/AutoScan.jpeg)
+![Scan Crop](https://raw.githubusercontent.com/AkashMatlani/document_scanner/master/assets/screenshots/ScanCrop.jpeg)
 
 ## What it does
 
