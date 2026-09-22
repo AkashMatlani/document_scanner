@@ -11,12 +11,9 @@ Scan a document, let OCR extract the text, detect useful entities, and keep the 
 
 ## 📸 Screenshots
 
-
-<p align="center">
-  <img src="assets/screenshots/ScanPage.jpeg" alt="Scan Page" width="180" height="350"/>
-  <img src="assets/screenshots/AutoScan.jpeg" alt="Auto Scan" width="180" height="350"/>
-  <img src="assets/screenshots/ScanCrop.jpeg" alt="Scan Crop" width="180" height="350"/>
-</p>
+![Auto Scan](assets/screenshots/ScanPage.jpeg)
+![Auto Scan](assets/screenshots/AutoScan.jpeg)
+![Auto Scan](assets/screenshots/ScanCrop.jpeg)
 
 ## What it does
 
