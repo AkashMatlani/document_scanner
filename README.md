@@ -9,7 +9,7 @@ The main idea is simple:
 
 Scan a document, let OCR extract the text, detect useful entities, and keep the scanned document available in the app's history.
 
-## Screenshots
+## 📸 Screenshots
 
 
 <p align="center">
@@ -17,7 +17,6 @@ Scan a document, let OCR extract the text, detect useful entities, and keep the 
   <img src="assets/screenshots/AutoScan.jpeg" alt="Auto Scan" width="180" height="350"/>
   <img src="assets/screenshots/ScanCrop.jpeg" alt="Scan Crop" width="180" height="350"/>
 </p>
----
 
 ## What it does
 
