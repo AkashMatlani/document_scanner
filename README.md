@@ -1,4 +1,3 @@
-````markdown
 # ScanAI
 
 A Flutter app for scanning documents, extracting text with OCR, detecting useful entities, and keeping scanned documents locally.
@@ -11,44 +10,46 @@ Scan a document, let OCR extract the text, detect useful entities, and keep the 
 
 ## 📸 Screenshots
 
-![Scan Page](https://raw.githubusercontent.com/AkashMatlani/document_scanner/master/assets/screenshots/ScanPage.jpeg)
-![Auto Scan](https://raw.githubusercontent.com/AkashMatlani/document_scanner/master/assets/screenshots/AutoScan.jpeg)
-![Scan Crop](https://raw.githubusercontent.com/AkashMatlani/document_scanner/master/assets/screenshots/ScanCrop.jpeg)
+<p align="center">
+  <img src="./assets/screenshots/ScanPage.jpeg" alt="Scan Page" width="180">
+  <img src="./assets/screenshots/AutoScan.jpeg" alt="Auto Scan" width="180">
+  <img src="./assets/screenshots/ScanCrop.jpeg" alt="Scan Crop" width="180">
+</p>
 
 ## What it does
 
-- Scan documents using Google ML Kit Document Scanner
-- Extract text using Google ML Kit Text Recognition
-- Pick an image from the gallery and run OCR
-- Capture an image using the camera and run OCR
-- Crop images before processing
-- Enhance images and convert them to grayscale before OCR
-- Extract entities from recognized text
-- Save scanned documents locally
-- Keep scanned images in the app's local storage
-- View previously scanned documents in Scan History
-- Delete saved documents from history
-- Share recognized text
-- Live camera OCR
-- Business card / entity extraction mode
+* Scan documents using Google ML Kit Document Scanner
+* Extract text using Google ML Kit Text Recognition
+* Pick an image from the gallery and run OCR
+* Capture an image using the camera and run OCR
+* Crop images before processing
+* Enhance images and convert them to grayscale before OCR
+* Extract entities from recognized text
+* Save scanned documents locally
+* Keep scanned images in the app's local storage
+* View previously scanned documents in Scan History
+* Delete saved documents from history
+* Share recognized text
+* Live camera OCR
+* Business card / entity extraction mode
 
 ## Tech stack
 
 The app is built with Flutter and uses:
 
-- Flutter
-- Dart
-- Riverpod for state management
-- GoRouter for navigation
-- Google ML Kit Document Scanner
-- Google ML Kit Text Recognition
-- Image Picker
-- Image Cropper
-- Share Plus
-- Shared Preferences
-- Path Provider
-- Image package
-- Camera
+* Flutter
+* Dart
+* Riverpod for state management
+* GoRouter for navigation
+* Google ML Kit Document Scanner
+* Google ML Kit Text Recognition
+* Image Picker
+* Image Cropper
+* Share Plus
+* Shared Preferences
+* Path Provider
+* Image package
+* Camera
 
 ## Project structure
 
@@ -71,7 +72,7 @@ lib/
 │   └── app_providers.dart
 │
 └── main.dart
-````
+```
 
 Some of the important pieces are:
 
@@ -143,18 +144,12 @@ Make sure Flutter is installed and your Android development environment is confi
 Then:
 
 ```bash
-git clone https://github.com/AkashMatlani/document_scanner
+git clone https://github.com/AkashMatlani/document_scanner.git
 cd document_scanner
 flutter pub get
 ```
 
 Run the app with:
-
-```bash
-flutter run
-```
-
-For Android, use:
 
 ```bash
 flutter run
@@ -327,5 +322,3 @@ flutter clean
 flutter pub get
 flutter run
 ```
-
-
