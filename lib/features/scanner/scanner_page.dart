@@ -66,13 +66,7 @@ class ScannerPage extends ConsumerWidget {
           ),
         );
       }
-    } on PlatformException catch (e, stack) {
-      debugPrint('=== DOCUMENT SCANNER PLATFORM EXCEPTION ===');
-      debugPrint('code: ${e.code}');
-      debugPrint('message: ${e.message}');
-      debugPrint('details: ${e.details}');
-      debugPrint('$stack');
-
+    } on PlatformException catch (e) {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -82,11 +76,7 @@ class ScannerPage extends ConsumerWidget {
           ),
         );
       }
-    } catch (e, stack) {
-      debugPrint('=== DOCUMENT SCANNER EXCEPTION ===');
-      debugPrint('$e');
-      debugPrint('$stack');
-
+    } catch (e) {
       if (context.mounted) {
         ScaffoldMessenger.of(context)
             .showSnackBar(SnackBar(content: Text('Scanner error: $e')));
