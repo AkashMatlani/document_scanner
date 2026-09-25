@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../providers/app_providers.dart';
 
@@ -11,7 +12,6 @@ class HistoryPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final asyncDocs = ref.watch(documentsProvider);
-
     return Scaffold(
       appBar: AppBar(title: const Text('Scan history')),
       body: asyncDocs.when(
@@ -45,8 +45,7 @@ class HistoryPage extends ConsumerWidget {
                         '${d.entities.length} entities • ${d.createdAt}',
                       ),
                       trailing: IconButton(
-                        onPressed: () =>
-                            ref.read(documentsProvider.notifier).remove(d.id),
+                        onPressed: () => _confirmDelete(context, ref, d.id),
                         icon: Icon(Icons.delete_outline),
                       ),
                     ),
@@ -57,5 +56,32 @@ class HistoryPage extends ConsumerWidget {
         loading: () => const Center(child: CircularProgressIndicator()),
       ),
     );
+  }
+
+  Future<void> _confirmDelete(
+    BuildContext context,
+    WidgetRef ref,
+    String id,
+  ) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Delete scan?'),
+        content: const Text('Are you sure you want to delete this scan?'),
+        actions: [
+          TextButton(
+            onPressed: () => context.pop(false),
+            child: const Text('Cancel'),
+          ),
+          FilledButton(
+            onPressed: () => context.pop(true),
+            child: const Text('Delete'),
+          ),
+        ],
+      ),
+    );
+    if (confirmed == true) {
+      await ref.read(documentsProvider.notifier).remove(id);
+    }
   }
 }

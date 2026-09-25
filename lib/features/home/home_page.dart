@@ -27,7 +27,6 @@ class HomePage extends StatelessWidget {
           subtitle: 'Native ML Kit scanner with crop and filters on Android',
           onTap: () => context.push('/scanner'),
         ),
-
         // Scan History
         _Tile(
           icon: Icons.history,
