@@ -1,12 +1,14 @@
 # ScanAI
 
-A Flutter app for scanning documents, extracting text with OCR, detecting useful entities, and keeping scanned documents locally.
+A Flutter app for scanning documents, extracting text with OCR, detecting useful entities, and
+keeping scanned documents locally.
 
 The main idea is simple:
 
 **Scan → OCR → Extract → Save → Review**
 
-Scan a document, let OCR extract the text, detect useful entities, and keep the scanned document available in the app's history.
+Scan a document, let OCR extract the text, detect useful entities, and keep the scanned document
+available in the app's history.
 
 ## 📸 Screenshots
 
@@ -121,11 +123,16 @@ This means the saved document does not depend on the temporary image path return
 
 OCR is handled by `OcrService`.
 
-The service creates an ML Kit `InputImage` from the image path and processes it with the configured text recognizer.
+The service creates an ML Kit `InputImage` from the image path and processes it with the configured
+text recognizer.
 
 ```dart
+
 final input = InputImage.fromFilePath(path);
-final result = await _recognizer.processImage(input);
+final result = await
+_recognizer.processImage
+(
+input);
 
 return result.text.trim();
 ```
@@ -146,7 +153,8 @@ busy
 error
 ```
 
-This allows the scanner and OCR result screens to share the current scan without manually passing the OCR result through the route.
+This allows the scanner and OCR result screens to share the current scan without manually passing
+the OCR result through the route.
 
 ## Running the project
 
@@ -166,7 +174,8 @@ Run the app with:
 flutter run
 ```
 
-The Google ML Kit Document Scanner flow is currently used on Android and requires Google Play services.
+The Google ML Kit Document Scanner flow is currently used on Android and requires Google Play
+services.
 
 ## Android requirements
 
@@ -247,7 +256,8 @@ The Home page also provides access to Scan History.
 
 Scanned documents are stored locally on the device.
 
-The app stores document metadata using `SharedPreferences` and stores the actual scanned image files in the application's documents directory.
+The app stores document metadata using `SharedPreferences` and stores the actual scanned image files
+in the application's documents directory.
 
 Saved images are placed in:
 
@@ -269,11 +279,13 @@ The stored document metadata is serialized as JSON.
 
 ### Image persistence
 
-The image returned by the scanner or selected from the device is copied into the app's own storage before the document is added to history.
+The image returned by the scanner or selected from the device is copied into the app's own storage
+before the document is added to history.
 
 This prevents the saved document from depending on a temporary scanner or picker file.
 
-If document persistence fails after the image has been copied, the copied image is removed as cleanup so an orphaned scan file is not intentionally left behind.
+If document persistence fails after the image has been copied, the copied image is removed as
+cleanup so an orphaned scan file is not intentionally left behind.
 
 ### Scan History
 
@@ -294,7 +306,8 @@ There is an optional:
 
 action.
 
-This takes the current image, processes it using the image service, converts it to grayscale when requested, and runs OCR again.
+This takes the current image, processes it using the image service, converts it to grayscale when
+requested, and runs OCR again.
 
 It can be useful when the original image does not produce good OCR results.
 
@@ -313,7 +326,8 @@ A few things are worth keeping in mind:
 * Google ML Kit Document Scanner is currently used through the Android scanner flow in this project.
 * Google Play services are required for the Android document scanner.
 * OCR quality depends on image quality, lighting, document layout, and text clarity.
-* Entity extraction is based on the rules implemented in the application and is not intended to replace a full NLP system.
+* Entity extraction is based on the rules implemented in the application and is not intended to
+  replace a full NLP system.
 * Local history is stored on the device and is not currently synchronized with a cloud service.
 
 ## Development
