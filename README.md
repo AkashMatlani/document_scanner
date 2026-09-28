@@ -16,6 +16,15 @@ Scan a document, let OCR extract the text, detect useful entities, and keep the 
 <img src="./assets/screenshots/AutoScan.jpeg" alt="Auto Scan" width="220" height="450">
 <img src="./assets/screenshots/ScanCrop.jpeg" alt="Scan Crop" width="220" height="450"> 
 <img src="./assets/screenshots/ScanHistory.jpeg" alt="Scan History" width="220" height="450">
+<img src="./assets/screenshots/DeleteScanPopup.jpeg" alt="Delete Scan Popup" width="220" height="450">
+<img src="./assets/screenshots/FilterPicture.jpeg" alt="Filter Picture" width="220" height="450">
+<img src="./assets/screenshots/ErasePicture.jpeg" alt="Erase Picture" width="220" height="450">
+<img src="./assets/screenshots/ScanPicture.jpeg" alt="Scan Picture" width="220" height="450">
+<img src="./assets/screenshots/ScanPictureDetailInfo.jpeg" alt="Scan Picture Detail Info" width="220" height="450">
+<img src="./assets/screenshots/ShareInfo.jpeg" alt="Share Info" width="220" height="450">
+
+
+
 </p>
 
 ## What it does
