@@ -20,22 +20,28 @@ class _OcrPageState extends ConsumerState<OcrPage> {
   final _picker = ImagePicker();
 
   Future<void> _pick(ImageSource source) async {
-    final file = await _picker.pickImage(source: source, imageQuality: 95);
-    if (file == null) return;
-    final cropped = await ImageCropper().cropImage(
-      sourcePath: file.path,
-      compressQuality: 95,
-      uiSettings: [
-        AndroidUiSettings(
-          toolbarTitle: 'Crop document',
-          lockAspectRatio: false,
-        ),
-        IOSUiSettings(title: 'Crop document'),
-      ],
-    );
+    try {
+      final file = await _picker.pickImage(source: source, imageQuality: 95);
+      if (file == null) return;
+      final cropped = await ImageCropper().cropImage(
+        sourcePath: file.path,
+        compressQuality: 95,
+        uiSettings: [
+          AndroidUiSettings(
+            toolbarTitle: 'Crop document',
+            lockAspectRatio: false,
+          ),
+          IOSUiSettings(title: 'Crop document'),
+        ],
+      );
+      if (!mounted) return;
+      final path = cropped?.path ?? file.path;
+      await ref.read(scanControllerProvider.notifier).recognize(path);
+    } catch (e) {
     if (!mounted) return;
-    final path = cropped?.path ?? file.path;
-    await ref.read(scanControllerProvider.notifier).recognize(path);
+    ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text('Unable to process image: $e')));
+    }
   }
 
   Future<void> _enhance() async {
@@ -44,7 +50,7 @@ class _OcrPageState extends ConsumerState<OcrPage> {
     final path = await ref
         .read(imageServiceProvider)
         .enhance(state.imagePath!, grayscale: true);
-    if (path == null|| !mounted) return;
+    if (path == null || !mounted) return;
     await ref.read(scanControllerProvider.notifier).recognize(path);
   }
 
