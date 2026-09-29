@@ -38,7 +38,8 @@ class _OcrPageState extends ConsumerState<OcrPage> {
       final path = cropped?.path ?? file.path;
       await ref.read(scanControllerProvider.notifier).recognize(path);
     } catch (e) {
-      ScaffoldMessenger.of(context)
+    if (!mounted) return;
+    ScaffoldMessenger.of(context)
           .showSnackBar(SnackBar(content: Text('Unable to process image: $e')));
     }
   }
